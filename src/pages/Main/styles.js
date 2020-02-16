@@ -75,3 +75,27 @@ export const SubmitButton = styled.button.attrs(props => ({
             }
         `}
 `;
+
+export const List = styled.ul`
+    list-style: none;
+    margin-top: 30px;
+
+    li {
+        padding: 15px 0;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+
+        /* cria uma linha horizontal em todos os itens adicionados, menos no primeiro item. */
+        & + li {
+            border-top: 1px solid #eee;
+        }
+
+        /* aplica cor no link 'detalhes' */
+        a {
+            color: #7159c1;
+            text-decoration: none;
+        }
+    }
+`;
