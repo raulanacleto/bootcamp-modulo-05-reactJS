@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import api from '../../services/api';
 
 import Container from '../../components/container';
-import { Loading, Owner, IssueList } from './styles';
+import { Loading, Owner, IssueList, FilterButton } from './styles';
 
 export default class Repository extends Component {
     static propTypes = {
@@ -45,7 +45,30 @@ export default class Repository extends Component {
             issues: issues.data,
             loading: false,
         });
+
+        console.log('componentDidMount');
     }
+
+    handleState = async e => {
+        const { match } = this.props;
+        const repoName = decodeURIComponent(match.params.repository);
+        const [repository, issues] = await Promise.all([
+            api.get(`/repos/${repoName}`),
+            api.get(`/repos/${repoName}/issues`, {
+                params: {
+                    state: e.target.value,
+                    per_page: 5,
+                },
+            }),
+        ]);
+
+        this.setState({
+            repository: repository.data,
+            issues: issues.data,
+            loading: false,
+        });
+        console.log('handleState');
+    };
 
     render() {
         const { repository, issues, loading } = this.state;
@@ -65,6 +88,27 @@ export default class Repository extends Component {
                     <h1>{repository.name}</h1>
                     <p>{repository.description}</p>
                 </Owner>
+                <FilterButton
+                    onClick={this.handleState}
+                    type="button"
+                    value="all"
+                >
+                    all
+                </FilterButton>
+                <FilterButton
+                    onClick={this.handleState}
+                    type="button"
+                    value="open"
+                >
+                    open
+                </FilterButton>
+                <FilterButton
+                    onClick={this.handleState}
+                    type="button"
+                    value="closed"
+                >
+                    closed
+                </FilterButton>
                 <IssueList>
                     {issues.map(issue => (
                         <li key={String(issue.id)}>

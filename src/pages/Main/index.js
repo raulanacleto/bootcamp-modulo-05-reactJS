@@ -9,11 +9,15 @@ import Container from '../../components/container';
 import { Form, SubmitButton, List } from './styles';
 
 export default class Main extends Component {
-    state = {
-        newRepo: '',
-        repositories: [],
-        loading: false,
-    };
+    constructor(props) {
+        super(props);
+        this.state = {
+            newRepo: '',
+            repositories: [],
+            loading: false,
+            deuErro: false,
+        };
+    }
 
     // carregar os dados do localstorage
     componentDidMount() {
@@ -45,21 +49,36 @@ export default class Main extends Component {
 
         const { newRepo, repositories } = this.state;
 
-        const response = await api.get(`repos/${newRepo}`);
+        try {
+            const response = await api.get(`repos/${newRepo}`);
+            const data = {
+                name: response.data.full_name,
+            };
 
-        const data = {
-            name: response.data.full_name,
-        };
+            const jaExisteRepositorio = repositories.find(
+                res => res.name === data.name
+            );
 
-        this.setState({
-            repositories: [...repositories, data],
-            newRepo: '',
-            loading: false,
-        });
+            if (jaExisteRepositorio) {
+                throw new Error('Repositório duplicado');
+            }
+
+            this.setState({
+                repositories: [...repositories, data],
+                newRepo: '',
+                loading: false,
+                deuErro: false,
+            });
+        } catch (error) {
+            this.setState({
+                loading: false,
+                deuErro: true,
+            });
+        }
     };
 
     render() {
-        const { newRepo, repositories, loading } = this.state;
+        const { newRepo, repositories, loading, deuErro } = this.state;
 
         return (
             <Container>
@@ -67,7 +86,7 @@ export default class Main extends Component {
                     <FaGithubAlt />
                     Repositórios
                 </h1>
-                <Form onSubmit={this.handleSubmit}>
+                <Form deuErro={deuErro} onSubmit={this.handleSubmit}>
                     <input
                         type="text"
                         placeholder="Adicionar Repositorio"

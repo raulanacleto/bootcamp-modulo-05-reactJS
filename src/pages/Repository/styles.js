@@ -101,3 +101,12 @@ export const IssueList = styled.ul`
         }
     }
 `;
+
+export const FilterButton = styled.button`
+    background: #7159c1;
+    color: #eee;
+    border: 0;
+    padding: 0 5px;
+    margin-left: 10px;
+    border-radius: 3px;
+`;

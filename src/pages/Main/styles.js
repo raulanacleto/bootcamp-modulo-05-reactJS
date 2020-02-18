@@ -1,4 +1,4 @@
-import styled, { Keyframes, css, keyframes } from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 
 export const Form = styled.form`
     margin-top: 30px;
@@ -7,7 +7,7 @@ export const Form = styled.form`
 
     input {
         flex: 1;
-        border: 1px solid #eee;
+        border: 1px solid ${props => (props.deuErro ? '#ff0000' : '#eee')};
         padding: 10px 15px;
         border-radius: 4px;
         font-size: 16px;
